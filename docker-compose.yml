@@ -1,7 +1,8 @@
 version: "3.9"
 services:
   mosquitto:
-    image: eclipse-mosquitto
+    image: eclipse-mosquitto:latest
+    restart: always
     volumes:
       - ./compose/conf/mosquitto:/mosquitto/config
       - ./compose/data/mosquitto:/mosquitto/data
@@ -11,6 +12,55 @@ services:
     ports:
       - "1883:1883"
       - "8883:8883"
+
+  zwavejs2mqtt:
+    image: zwavejs/zwavejs2mqtt:latest
+    restart: always
+    tty: true
+    stop_signal: SIGINT
+    networks:
+      - home
+    devices:
+      - /dev/zwave:/dev/zwave
+    volumes:
+      - ./compose/data/zwavejs2mqtt:/usr/src/app/store
+    ports:
+      - '8091:8091' # port for web interface
+      - '3001:3000' # port for zwave-js websocket server
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:latest
+    restart: always
+    networks:
+      - home
+    devices:
+      - /dev/zigbee:/dev/zigbee
+    volumes:
+      - ./compose/data/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    ports:
+      - '8080:1881' # port for web interface
+
+  node-red:
+    image: nodered/node-red:latest
+    restart: always
+    networks:
+      - home
+    volumes:
+      - ./compose/data/node-red:/data:Z
+    ports:
+      - "1880:1880"
+  
+  homeassistant:
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    restart: always
+    networks:
+      home
+    volumes:
+      - ./compose/data/hass:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8123:8123"
 
 
 networks:
