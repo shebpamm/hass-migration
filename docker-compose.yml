@@ -3,7 +3,7 @@ services:
   mosquitto:
     image: eclipse-mosquitto
     volumes:
-      - ./compose/conf/mosquitto:/mosquitto/conf
+      - ./compose/conf/mosquitto:/mosquitto/config
       - ./compose/data/mosquitto:/mosquitto/data
       - ./compose/log/mosquitto:/mosquitto/log
     networks:
