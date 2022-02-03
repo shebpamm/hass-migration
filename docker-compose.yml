@@ -3,6 +3,7 @@ services:
   mosquitto:
     image: eclipse-mosquitto:latest
     restart: always
+    user: root:root
     volumes:
       - ./compose/conf/mosquitto:/mosquitto/config
       - ./compose/data/mosquitto:/mosquitto/data
@@ -44,6 +45,7 @@ services:
   node-red:
     image: nodered/node-red:latest
     restart: always
+    user: root:root
     networks:
       - home
     volumes:
@@ -55,7 +57,7 @@ services:
     image: "ghcr.io/home-assistant/home-assistant:stable"
     restart: always
     networks:
-      home
+      - home
     volumes:
       - ./compose/data/hass:/config
       - /etc/localtime:/etc/localtime:ro
